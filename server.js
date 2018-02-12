@@ -6,9 +6,18 @@ var mongoose = require('mongoose');
 var User = require('./app/models/user');
 var bodyParser = require('body-parser');
 
-app.use(bodyParser.json()); //for parsing application json
-app.use(bodyParser.urlencoded({ extended: true }));
+var jsonParser = bodyParser.json();
+
+//Body Parser Middleware
+//parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+// parse application/json
+app.use(bodyParser.json());
+
+//logger
 app.use(morgan('dev'));
+
+
 
 mongoose.connect('mongodb://localhost:27017/mean1');
 
@@ -19,13 +28,14 @@ db.once('open', function() {
   console.log("we're connected");
 });
 
-app.post('/users', (req, res) => {
+app.post('/users', function(req, res) {
+  // console.log(req);
   var user = new User();
   user.username = req.body.username;
   user.password = req.body.password;
   user.email = req.body.email;
   user.save();
-  res.send('user created')
+  res.send('user created');
 });
 
 app.listen(port, () => {
