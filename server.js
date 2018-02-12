@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var router = express.Router();
 var appRoutes = require('./app/routes/api')(router);
 var jsonParser = bodyParser.json();
+var path = require('path');
 
 //logger
 app.use(morgan('dev'));
@@ -16,7 +17,9 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
+app.use(express.static(__dirname + '/public/frontend'));
 app.use('/api', appRoutes);
+//down is for frontend
 
 
 
@@ -28,7 +31,9 @@ db.once('open', function() {
   console.log("we're connected");
 });
 
-
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/public/frontend/src/index.html'));
+});
 
 app.listen(port, () => {
   console.log('running the server on port', + port);
